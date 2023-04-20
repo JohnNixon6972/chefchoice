@@ -52,4 +52,4 @@ def predict_img():
     d['output'] = result
     return d
 
-app.run()
+app.run(debug=False)
