@@ -52,6 +52,4 @@ def predict_img():
     d['output'] = result
     return d
 
-
-if __name__ == "__main__":
-    app.run()
+app.run()
