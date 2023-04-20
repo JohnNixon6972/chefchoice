@@ -1,26 +1,30 @@
 from flask import Flask , request , jsonify
 import tensorflow as tf
 import numpy as np
+import requests
 from PIL import Image
 
 from io import BytesIO
 
 app = Flask(__name__)
 
-@app.route('/api', methods = ['GET'])
+@app.route('/api', methods = ['POST'])
 def predict_img():
     d={}
-    imgUrl = str(request.args['Query'])
-    with open(imgUrl,"rb") as res:
-        buf =BytesIO(res.read())
+    json_data = request.get_json()
 
-    interpreter = tf.lite.Interpreter(model_path="./model/DIsh Identification.tflite")
+    # Reading the imgUrl argument
+    imgUrl = json_data.get('imgUrl')
+    response = requests.get(imgUrl)
+    img_data = response.content
+
+    interpreter = tf.lite.Interpreter(model_path="model/DIsh Identification.tflite")
     interpreter.allocate_tensors()
 
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
-    image = Image.open(buf)
+    image = Image.open(BytesIO(img_data))
     image_array = np.array(image.resize((150, 150)), dtype=np.float32)
     image_array = np.expand_dims(image_array, axis=0)
     image_array = image_array / 255.0
@@ -33,10 +37,10 @@ def predict_img():
 
     predicted_class_index = np.argmax(output)
 
-    # print("Predicted class index: ", predicted_class_index)
-    # print("Predicted class score: ", output[0][predicted_class_index] * 100, "%")
+    print("Predicted class index: ", predicted_class_index)
+    print("Predicted class score: ", output[0][predicted_class_index] * 100, "%")
 
-    with open('./model/labelss.txt', 'r') as f:
+    with open('model/labelss.txt', 'r') as f:
         labels = [line.strip() for line in f.readlines()]
     label_map = {i: label for i, label in enumerate(labels)}
     predicted_label = label_map[predicted_class_index]
@@ -50,6 +54,10 @@ def predict_img():
     print("predicted dish : ", predicted_label)
     print("Predicted class score: ", output[0][predicted_class_index] * 100, "%")
     d['output'] = result
-    return d
 
-app.run(debug=False)
+    return jsonify(d)
+
+if __name__ == "__main__":
+    print("Server is running on port 5000")
+    app.run(debug=True,port=5000)
+    
