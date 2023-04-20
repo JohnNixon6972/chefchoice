@@ -14,7 +14,7 @@ def predict_img():
     with open(imgUrl,"rb") as res:
         buf =BytesIO(res.read())
 
-    interpreter = tf.lite.Interpreter(model_path="C:/Users/acer/AndroidStudioProjects/chefchoice/assets/model/DIsh Identification.tflite")
+    interpreter = tf.lite.Interpreter(model_path="./model/DIsh Identification.tflite")
     interpreter.allocate_tensors()
 
     input_details = interpreter.get_input_details()
@@ -36,7 +36,7 @@ def predict_img():
     # print("Predicted class index: ", predicted_class_index)
     # print("Predicted class score: ", output[0][predicted_class_index] * 100, "%")
 
-    with open('C:/Users/acer/AndroidStudioProjects/chefchoice/assets/model/labelss.txt', 'r') as f:
+    with open('./model/labelss.txt', 'r') as f:
         labels = [line.strip() for line in f.readlines()]
     label_map = {i: label for i, label in enumerate(labels)}
     predicted_label = label_map[predicted_class_index]
