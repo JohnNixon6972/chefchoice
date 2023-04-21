@@ -57,7 +57,8 @@ def predict_img():
 
     return jsonify(d)
 
+dev_host = "0.0.0.0"
 if __name__ == "__main__":
     print("Server is running on port 5000")
-    app.run(debug=True,port=5000)
+    app.run(host=dev_host , debug=True,port=5000)
     
