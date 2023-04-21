@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import requests
 from PIL import Image
+import os
 
 from io import BytesIO
 
@@ -57,8 +58,7 @@ def predict_img():
 
     return jsonify(d)
 
-dev_host = "0.0.0.0"
 if __name__ == "__main__":
-    print("Server is running on port 5000")
-    app.run(host=dev_host , debug=True,port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
     
